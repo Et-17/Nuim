@@ -1,0 +1,22 @@
+program = { func_defs } ; 
+func_defs = func_sig, "=", expr ;
+func_sig = func_name, { var_name } ;
+expr = { func_name | var_name | literal } ;
+func_name = letter, { num | letter | "_" } ;
+var_name = letter, { num | letter | "_" } ;
+literal = num | str | char ;
+letter = u_letter | l_letter ;
+u_letter = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | 
+           "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | 
+           "U" | "V" | "W" | "X" | "Y" | "Z" ;
+l_letter = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" |
+           "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" |
+           "u" | "v" | "w" | "x" | "y" | "z" ;
+num = h_num | b_num | d_num ; 
+str = '"', { ascii_char | e_code }, '"' ;
+char = "'", ascii_char |  e_code, "'" ;
+h_num = "0x", { "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | 
+                "9" | "A" | "a" | "B" | "b" | "C" | "c" | "D" | "d" | 
+                "E" | "e" | "F" | "f" }  ;
+d_num = { "0", "1", "2", "3", "4", "5", "7", "8", "9" } ;
+b_num = "0b", { "0", "1" } ;
