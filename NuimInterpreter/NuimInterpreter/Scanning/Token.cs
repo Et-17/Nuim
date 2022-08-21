@@ -19,7 +19,7 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// The actual value of the token
         /// </summary>
-        public readonly Object Literal;
+        public readonly Object? Literal;
         /// <summary>
         /// The line on which the token is
         /// </summary>
@@ -33,7 +33,7 @@ namespace NuimInterpreter.Scanning
         /// <param name="literal">The actual value of the token</param>
         /// <param name="line">The line on which the token is</param>
         /// <exception cref="ArgumentOutOfRangeException">Occurs if <c>line</c> is below zero</exception>
-        public Token(TokenType type, string lexeme, object literal, int line)
+        public Token(TokenType type, string lexeme, object? literal, int line)
         {
             Type = type;
             Lexeme = lexeme;
