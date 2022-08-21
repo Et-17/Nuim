@@ -4,9 +4,7 @@
     {
         static void Main(string[] args)
         {
-            ErrorReporting.Reporter.ReportError(new(15));
-            ErrorReporting.Reporter.ReportError(new(20));
-            ErrorReporting.Reporter.SummarizeErrors();
+            Console.WriteLine(new Scanning.Token(Scanning.TokenType.INTEGER, "123", 123, 15));
         }
     }
 }
