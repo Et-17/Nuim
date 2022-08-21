@@ -4,7 +4,9 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            ErrorReporting.Reporter.ReportError(new(15));
+            ErrorReporting.Reporter.ReportError(new(20));
+            ErrorReporting.Reporter.SummarizeErrors();
         }
     }
 }
