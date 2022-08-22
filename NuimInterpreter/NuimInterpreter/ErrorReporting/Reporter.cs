@@ -9,22 +9,31 @@ namespace NuimInterpreter.ErrorReporting
     /// <summary>
     /// A <c>static</c> class used for reporting errors in Nuim code
     /// </summary>
-    public static class Reporter
+    public class Reporter
     {
         /// <summary>
         /// All errors reported so far
         /// </summary>
-        public readonly static List<Error> Errors = new();
+        public readonly List<Error> Errors = new();
         /// <summary>
         /// The stream to write errors to
         /// </summary>
-        public readonly static TextWriter ErrorStream = Console.Error;
+        public readonly TextWriter ErrorStream = Console.Error;
+
+        /// <summary>
+        /// Construct a new <c>Reporter</c>
+        /// </summary>
+        /// <param name="errorStream">The stream to output to</param>
+        public Reporter(TextWriter errorStream)
+        {
+            ErrorStream = errorStream;
+        }
 
         /// <summary>
         /// Reports an error to the stream specified in the <c>ErrorStream</c> property
         /// </summary>
         /// <param name="e">The error to report</param>
-        public static void ReportError(Error e)
+        public void ReportError(Error e)
         {
             Errors.Add(e);
             ErrorStream.WriteLine("[line {0}] {1}", e.LineNumber, e.ToString());
@@ -33,7 +42,7 @@ namespace NuimInterpreter.ErrorReporting
         /// <summary>
         /// Outputs a count of the fatal errors encountered
         /// </summary>
-        public static void SummarizeErrors()
+        public void SummarizeErrors()
         {
             ErrorStream.WriteLine("Fatal errors: {0}", Errors.Count);
         }
