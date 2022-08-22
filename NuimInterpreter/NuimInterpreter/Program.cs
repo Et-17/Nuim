@@ -4,9 +4,13 @@
     {
         static void Main(string[] args)
         {
-            ErrorReporting.Reporter.ReportError(new(15));
-            ErrorReporting.Reporter.ReportError(new(20));
-            ErrorReporting.Reporter.SummarizeErrors();
+            string program = "" +
+                "test : int -> int => int; \n" + 
+                "# comment test\n" +
+                "test x y = 2a4.32 16 \"Hello, World! stdout println$;";
+            Scanning.Scanner.InitScanner(program);
+            List<Scanning.Token> tokens = Scanning.Scanner.ScanTokens();
+            tokens.ForEach(Console.WriteLine);
         }
     }
 }
