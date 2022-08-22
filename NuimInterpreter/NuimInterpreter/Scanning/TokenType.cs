@@ -15,7 +15,7 @@ namespace NuimInterpreter.Scanning
         APPLICATION, VARIABLE, SEMICOLON,
         
         // Function definition
-        FUNCTION, BINDING, ARG_ARROW, RETURN_ARROW, ARG_COLON, 
+        FUNCTION, BINDING, DEF_EQUAL, ARG_ARROW, RETURN_ARROW, ARG_COLON, 
         
         // Literals
         CHAR, STRING, INTEGER,

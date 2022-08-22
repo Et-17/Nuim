@@ -4,7 +4,13 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(new Scanning.Token(Scanning.TokenType.INTEGER, "123", 123, 15));
+            string program = "" +
+                "test : int -> int => int; \n" + 
+                "# comment test\n" +
+                "test x y = 2a4.32 16 \"Hello, World! stdout println$;";
+            Scanning.Scanner.InitScanner(program);
+            List<Scanning.Token> tokens = Scanning.Scanner.ScanTokens();
+            tokens.ForEach(Console.WriteLine);
         }
     }
 }
