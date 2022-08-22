@@ -9,7 +9,7 @@ namespace NuimInterpreter.Scanning.Errors
     /// <summary>
     /// An exception for incorrectly formatted numbers
     /// </summary>
-    internal class NumberFormattingException : ErrorReporting.Error
+    public class NumberFormattingException : ErrorReporting.Error
     {
         public NumberFormattingException(int lineNumber) : base(lineNumber) { }
 

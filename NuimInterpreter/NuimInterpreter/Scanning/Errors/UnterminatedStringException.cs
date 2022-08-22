@@ -9,7 +9,7 @@ namespace NuimInterpreter.Scanning.Errors
     /// <summary>
     /// An exception for strings that don't get terminated before EOF
     /// </summary>
-    internal class UnterminatedStringException : NuimInterpreter.ErrorReporting.Error
+    public class UnterminatedStringException : NuimInterpreter.ErrorReporting.Error
     {
         public UnterminatedStringException(int lineNumber) : base(lineNumber) { }
 
