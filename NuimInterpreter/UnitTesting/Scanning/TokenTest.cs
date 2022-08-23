@@ -40,5 +40,52 @@ namespace UnitTesting.Scanning
                 Assert.AreEqual(String.Format("{0}: placeholder", type), tok.ToString());
             }
         }
+
+        [TestMethod]
+        public void EqualityNonNullLiteral()
+        {
+            Token tok1 = new(TokenType.APPLICATION, "placeholder", 123, 5);
+            Token tok2 = new(TokenType.APPLICATION, "placeholder", 123, 5);
+            Assert.AreEqual(tok1, tok2);
+        }
+
+        [TestMethod]
+        public void EqualityNullLiteral()
+        {
+            Token tok1 = new(TokenType.APPLICATION, "placeholder", null, 5);
+            Token tok2 = new(TokenType.APPLICATION, "placeholder", null, 5);
+            Assert.AreEqual(tok1, tok2);
+        }
+
+        [TestMethod]
+        public void NonEquality()
+        {
+            Token tok1 = new(TokenType.APPLICATION, "placeholder", 123, 5);
+            Token tok2 = new(TokenType.INTEGER, "holderplace", 456, 5);
+            Assert.AreNotEqual(tok1, tok2);
+        }
+
+        [TestMethod]
+        public void InvalidEqualityQuery()
+        {
+            Token tok1 = new(TokenType.APPLICATION, "placeholder", 123, 5);
+            Assert.IsFalse(tok1.Equals(null));
+            Assert.IsFalse(tok1.Equals(123));
+        }
+
+        [TestMethod]
+        public void SelfSimilarity()
+        {
+            Token tok1 = new(TokenType.APPLICATION, "placeholder", 123, 5);
+            Assert.AreEqual(tok1, tok1);
+        }
+
+        [TestMethod]
+        public void ReferencedEquality()
+        {
+            List<Token> tokl1 = new() { new(TokenType.APPLICATION, "placeholder", 123, 5) };
+            List<Token> tokl2 = new() { new(TokenType.APPLICATION, "placeholder", 123, 5) };
+            Assert.AreEqual(tokl1[0], tokl2[0]);
+        }
     }
 }

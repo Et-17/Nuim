@@ -9,7 +9,7 @@ namespace NuimInterpreter.Scanning
     /// <summary>
     /// Scans and tokenizes Nuim code. First call <c>InitScanner</c> to give it the code, then call <c>ScanTokens</c> to tokenize the code
     /// </summary>
-    internal class Scanner
+    public class Scanner
     {
         /// <summary>
         /// The source being scanned
@@ -18,7 +18,7 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// The previously scanned tokens
         /// </summary>
-        private List<Token> Tokens = new();
+        public List<Token> Tokens = new();
         /// <summary>
         /// The position of the start of the token being scanned
         /// </summary>
@@ -88,11 +88,7 @@ namespace NuimInterpreter.Scanning
                     break;
 
                 case '-':
-                    if (Peek() == '>')
-                    { 
-                        Advance(); 
-                        AddToken(TokenType.ARG_ARROW);
-                    }
+                    if (Match('>')) AddToken(TokenType.ARG_ARROW);
                     else HandleVariable();
                     break;
 
@@ -136,7 +132,7 @@ namespace NuimInterpreter.Scanning
         /// </summary>
         private void HandleVariable()
         {
-            while (Peek() != '$' && Peek() != ';' && !char.IsWhiteSpace(Peek()) && !IsAtEnd())
+            while (!IsAtEnd() && Peek() != '$' && Peek() != ';' && !char.IsWhiteSpace(Peek()))
             {
                 Advance();
             }
@@ -166,7 +162,7 @@ namespace NuimInterpreter.Scanning
             else
             {
                 Advance();
-                AddToken(TokenType.STRING, Source.Substring(Start + 1, (Current - 1) - (Start - 1)));
+                AddToken(TokenType.STRING, Source.Substring(Start + 1, (Current - 1) - (Start + 1)));
             }
 
         }
@@ -176,7 +172,7 @@ namespace NuimInterpreter.Scanning
         /// </summary>
         private void HandleNum()
         {
-            while (Peek() != '$' && !char.IsWhiteSpace(Peek()) && !IsAtEnd())
+            while (!IsAtEnd() && Peek() != '$' && !char.IsWhiteSpace(Peek()))
             {
                 Advance();
             }
@@ -206,7 +202,7 @@ namespace NuimInterpreter.Scanning
         /// Get the next character of the source without moving forward
         /// </summary>
         /// <returns>The next character of the source</returns>
-        private char Peek() => Source[Current];
+        private char Peek() => IsAtEnd() ? '\0' : Source[Current];
 
         /// <summary>
         /// Add a new token, given only the type
