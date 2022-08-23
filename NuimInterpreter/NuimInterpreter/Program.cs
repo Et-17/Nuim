@@ -8,8 +8,8 @@
                 "test : int -> int => int; \n" + 
                 "# comment test\n" +
                 "test x y = 2a4.32 16 \"Hello, World! stdout println$;";
-            Scanning.Scanner.InitScanner(program);
-            List<Scanning.Token> tokens = Scanning.Scanner.ScanTokens();
+            Scanning.Scanner s = new(program, new(Console.Error));
+            List<Scanning.Token> tokens = s.ScanTokens();
             tokens.ForEach(Console.WriteLine);
         }
     }

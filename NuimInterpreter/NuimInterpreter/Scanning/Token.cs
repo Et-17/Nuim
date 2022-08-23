@@ -47,5 +47,32 @@ namespace NuimInterpreter.Scanning
 
         public override string ToString() =>
             String.Format("{0}: {1}", Type, Lexeme);
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+            {
+                //throw new ArgumentNullException(nameof(obj));
+                return false;
+            } else if (obj.GetType() != GetType()) 
+            {
+                //throw new ArgumentException("Invalid Type", nameof(obj));
+                return false;
+            } else
+            {
+                Token objT = (Token)obj;
+                return Type == objT.Type
+                    && Lexeme.Equals(objT.Lexeme)
+                    // The next line is very hacky but it works
+                    // It's a ternary that first checks if both literals are null, and returns true if they are
+                    // If they aren't, it compares them together
+                    // The bit near the end with the Literal ?? new() just handles solo-null literals
+                    // If we didn't have that it'd still work, but we'd get compiler warnings
+                    && (Literal == null && objT.Literal == null) || (Literal ?? new()).Equals(objT.Literal)
+                    && Line == objT.Line;
+            }
+        }
+
+        public override int GetHashCode() => base.GetHashCode();
     }
 }

@@ -9,43 +9,49 @@ namespace NuimInterpreter.Scanning
     /// <summary>
     /// Scans and tokenizes Nuim code. First call <c>InitScanner</c> to give it the code, then call <c>ScanTokens</c> to tokenize the code
     /// </summary>
-    internal static class Scanner
+    public class Scanner
     {
         /// <summary>
         /// The source being scanned
         /// </summary>
-        private static string Source = "";
+        private string Source = "";
         /// <summary>
         /// The previously scanned tokens
         /// </summary>
-        private static List<Token> Tokens = new();
+        public List<Token> Tokens = new();
         /// <summary>
         /// The position of the start of the token being scanned
         /// </summary>
-        private static int Start = 0;
+        private int Start = 0;
         /// <summary>
         /// The position of the character currently being scanned
         /// </summary>
-        private static int Current = 0;
+        private int Current = 0;
         /// <summary>
         /// The physical line being scanned
         /// </summary>
-        private static int Line = 1;
+        private int Line = 1;
+        /// <summary>
+        /// The reporter to use to report errors
+        /// </summary>
+        private ErrorReporting.Reporter Reporter;
 
         /// <summary>
-        /// Change the internal source
+        /// Construct a new scanner on the given source
         /// </summary>
-        /// <param name="source">The new source to use</param>
-        public static void InitScanner(string source)
+        /// <param name="source">The source to scan</param>
+        /// <param name="reporter">The reporter to report errors to</param>
+        public Scanner(string source, ErrorReporting.Reporter reporter)
         {
             Source = source;
+            Reporter = reporter;
         }
 
         /// <summary>
         /// Activate the scanner on the current source
         /// </summary>
         /// <returns>The scanned tokens</returns>
-        public static List<Token> ScanTokens()
+        public List<Token> ScanTokens()
         {
             while (!IsAtEnd())
             {
@@ -59,7 +65,7 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// Scans the next token
         /// </summary>
-        private static void ScanToken()
+        private void ScanToken()
         {
             // Get next character
             char c = Advance();
@@ -82,11 +88,7 @@ namespace NuimInterpreter.Scanning
                     break;
 
                 case '-':
-                    if (Peek() == '>')
-                    { 
-                        Advance(); 
-                        AddToken(TokenType.ARG_ARROW);
-                    }
+                    if (Match('>')) AddToken(TokenType.ARG_ARROW);
                     else HandleVariable();
                     break;
 
@@ -116,7 +118,7 @@ namespace NuimInterpreter.Scanning
         /// </summary>
         /// <param name="expected">The character to match</param>
         /// <returns>Whether or not the charater was matched</returns>
-        private static bool Match(char expected)
+        private bool Match(char expected)
         {
             if (IsAtEnd()) return false;
             if (Peek() != expected) return false;
@@ -128,9 +130,9 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// Scans a variable token
         /// </summary>
-        private static void HandleVariable()
+        private void HandleVariable()
         {
-            while (Peek() != '$' && Peek() != ';' && !char.IsWhiteSpace(Peek()) && !IsAtEnd())
+            while (!IsAtEnd() && Peek() != '$' && Peek() != ';' && !char.IsWhiteSpace(Peek()))
             {
                 Advance();
             }
@@ -141,7 +143,7 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// Scans a string literal
         /// </summary>
-        private static void HandleString()
+        private void HandleString()
         {
             while (!IsAtEnd() && Peek() != '"')
             {
@@ -155,12 +157,12 @@ namespace NuimInterpreter.Scanning
 
             if (IsAtEnd())
             {
-                ErrorReporting.Reporter.ReportError(new Errors.UnterminatedStringException(Line));
+                Reporter.ReportError(new Errors.UnterminatedStringException(Line));
             }
             else
             {
                 Advance();
-                AddToken(TokenType.STRING, Source.Substring(Start + 1, (Current - 1) - (Start - 1)));
+                AddToken(TokenType.STRING, Source.Substring(Start + 1, (Current - 1) - (Start + 1)));
             }
 
         }
@@ -168,19 +170,19 @@ namespace NuimInterpreter.Scanning
         /// <summary>
         /// Scans a number literal
         /// </summary>
-        private static void HandleNum()
+        private void HandleNum()
         {
-            while (Peek() != '$' && !char.IsWhiteSpace(Peek()) && !IsAtEnd())
+            while (!IsAtEnd() && Peek() != '$' && !char.IsWhiteSpace(Peek()))
             {
                 Advance();
             }
 
             try
             {
-                AddToken(TokenType.INTEGER, Convert.ToInt32(Source.Substring(Start, Current - Start)));
+                AddToken(TokenType.INTEGER, Convert.ToInt32(Source[Start..Current]));
             } catch (FormatException)
             {
-                ErrorReporting.Reporter.ReportError(new Errors.NumberFormattingException(Line));
+                Reporter.ReportError(new Errors.NumberFormattingException(Line));
             }
         }
 
@@ -188,25 +190,25 @@ namespace NuimInterpreter.Scanning
         /// Detect if the scanner has reached the end of the source
         /// </summary>
         /// <returns>Whether or not the scanner has reached the end of the source</returns>
-        private static bool IsAtEnd() => Current >= Source.Length;
+        private bool IsAtEnd() => Current >= Source.Length;
 
         /// <summary>
         /// Get the next character of the source and then move forward
         /// </summary>
         /// <returns>The next character of the source</returns>
-        private static char Advance() => Source[Current++];
+        private char Advance() => Source[Current++];
 
         /// <summary>
         /// Get the next character of the source without moving forward
         /// </summary>
         /// <returns>The next character of the source</returns>
-        private static char Peek() => Source[Current];
+        private char Peek() => IsAtEnd() ? '\0' : Source[Current];
 
         /// <summary>
         /// Add a new token, given only the type
         /// </summary>
         /// <param name="type">The type of the new token</param>
-        private static void AddToken(TokenType type)
+        private void AddToken(TokenType type)
         {
             AddToken(type, null);
         }
@@ -216,9 +218,9 @@ namespace NuimInterpreter.Scanning
         /// </summary>
         /// <param name="type">Then type of the new token</param>
         /// <param name="literal">The literal value of the token</param>
-        private static void AddToken(TokenType type, object? literal)
+        private void AddToken(TokenType type, object? literal)
         {
-            Tokens.Add(new(type, Source.Substring(Start, Current - Start), literal, Line));
+            Tokens.Add(new(type, Source[Start..Current], literal, Line));
         }
     }
 }
